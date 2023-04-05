@@ -1,11 +1,24 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { StyleSheet, PDFDownloadLink } from "@react-pdf/renderer";
 import { getProduct } from "../services/apiConfig/apiiCalls";
 import Breadcrumbs from "./global/Breadcrumbs";
+import PDF from "./global/PDF";
 
 interface Props {
   ifAny?: any;
 }
+
+const styles = StyleSheet.create({
+  page: {
+    flexDirection: "row",
+    backgroundColor: "#E4E4E4",
+  },
+  section: {
+    margin: 10,
+    padding: 10,
+  },
+});
 
 const DetailsPage: React.FC<Props> = () => {
   const [Product, SetProduct]: any = useState({});
@@ -17,7 +30,7 @@ const DetailsPage: React.FC<Props> = () => {
     getProduct(productId).then((response: any) => {
       SetProduct(response);
     });
-  }, []);
+  }, [productId]);
 
   return (
     <main className="detail-page main-page">
@@ -53,6 +66,15 @@ const DetailsPage: React.FC<Props> = () => {
           </tbody>
         </table>
       </div>
+
+      <PDFDownloadLink
+        document={<PDF productData={Product} />}
+        fileName="product_details.pdf"
+      >
+        {({ blob, url, loading, error }) =>
+          loading ? "Loading document..." : "Download now!"
+        }
+      </PDFDownloadLink>
     </main>
   );
 };
